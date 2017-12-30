@@ -1,6 +1,6 @@
 // Create variables for map and location array
 var map;
-var locations = [];
+
 
 // Initialize map
 function initMap() {
@@ -28,12 +28,12 @@ function initMap() {
 
   // Define location object
   var Location = function(locationData) {
-
+    var self = this;
     this.title = locationData.title;
     this.position = locationData.location;
     this.venue_id = locationData.venue_id;
-    this.hidden = ko.observable(false);
-    this.infoWindow = new google.maps.InfoWindow();
+    this.visible = ko.observable(false);
+    this.infowindow = new google.maps.InfoWindow({content: locationData.title});
 
     this.marker = new google.maps.Marker({
       map: map,
@@ -41,49 +41,62 @@ function initMap() {
       position: locationData.location
     });
 
-    this.hideMarker = ko.pureComputed(function() {
-      if (self.hidden()) {
-        this.marker.setMap(null);
-      } else {
+    this.marker.addListener('click', function() {
+            populateInfoWindow(this, self.infowindow);
+          });
+
+    this.showMarker = ko.computed(function() {
+      if (this.visible()) {
         this.marker.setMap(map);
+      } else {
+        this.marker.setMap(null);
       }
-      return true;
     }, this);
 
-    this.infoWindow.setContent(locationData.title);
-  }
+    function populateInfoWindow(marker, infowindow) {
+        // Check to make sure the infowindow is not already opened on this marker.
 
-  // Create an object for each point of interest
-  pointsOfInterest.forEach(function(info) {
-    locations.push(new Location(info));
-  });
+          if (infowindow.marker != marker) {
+            infowindow.marker = marker;
+            infowindow.setContent('<div>' + marker.title + '</div>');
+            infowindow.open(map, marker);
+            // Make sure the marker property is cleared if the infowindow is closed.
+            infowindow.addListener('closeclick',function() {
+              infowindow.setMarker = null;
+            });
+          }
+
+      }
+    }
 
   // Knockout view model
   var viewModel = function() {
 
     var self = this;
     this.filter = ko.observable();
+    this.locations = ko.observableArray([]);
 
     // Filter the locations based on the filter text
-    this.filteredLocations = ko.pureComputed(function() {
-      var filter = self.filter();
+    pointsOfInterest.forEach(function(locationData){
+		    self.locations.push(new Location(locationData));
+	     });
 
-      if (!filter) {
-        // If no filter entered, return all locations
-        locations.forEach(function(location) {
-          location.hidden(false);
-        });
-        return locations;
-      }
+  	this.filteredLocations = ko.computed(function() {
+       var filter = self.filter();
 
-      // Convert to lower case and compare filter to location titles
-      var filterLocations = function(location) {
-              return location.title.toLowerCase().includes(filter.toLowerCase());
-      };
-
-      return locations.filter(filterLocations);
-    });
-
+  		   if (!filter) {
+  			      self.locations().forEach(function(location){
+  				          location.visible(true);
+  			   });
+  			   return self.locations();
+  		   } else {
+  			   return ko.utils.arrayFilter(self.locations(), function(location) {
+                    visibility = (location.title.toLowerCase().search(filter.toLowerCase()) >= 0);
+                    location.visible(visibility);
+  				          return visibility;
+  			       });
+  		   }
+  	 }, self);
   };
 
   ko.applyBindings(new viewModel());
