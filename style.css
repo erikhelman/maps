@@ -1,4 +1,3 @@
-/* Make the main container fullscreen */
 #main {
   height:100vh;
 }
@@ -7,4 +6,13 @@
 }
 td {
   cursor: pointer;
+}
+@media screen and (max-width: 575px) {
+    #links {
+        height: 50%;
+        overflow: scroll;
+    }
+    #map {
+      height: 50%;
+    }
 }

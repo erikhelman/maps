@@ -80,13 +80,12 @@ function initMap() {
 
         infowindow.marker = marker;
 
-
+        // Perform a request to Foursquare for a photo of the currently selected marker
         var jqxhr = $.getJSON( url, data, function() {
         })
         .done(function() {
           if (jqxhr.status === 200) {
             photo = jqxhr.responseJSON.response.photos.items[0].prefix + "cap200" + jqxhr.responseJSON.response.photos.items[0].suffix;
-            console.log(photo);
             infowindow.setContent('<div><b>' + marker.title + '</b></div><div><img src= ' + photo + ' alt="Venue photo"></img></div>');
 
           } else {
@@ -97,6 +96,7 @@ function initMap() {
           infowindow.setContent('<div><b>' + marker.title + '</b></div><div>Unable to retrieve photo data</div>');
         })
 
+        // Open the infowindow and pan to the currently selected marker
         infowindow.open(map, marker);
         map.panTo(marker.getPosition());
 

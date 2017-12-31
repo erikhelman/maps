@@ -17,17 +17,17 @@
   </head>
   <body>
     <!-- create main container -->
-    <div class="container-fluid">
+    <div class="container-flex">
       <!-- create rows for location list and map -->
       <div class="row" id="main">
-        <div class="col-3">
+        <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3" id="links">
           <h4 id="title-heading">Check Out This Stuff in Japan!</h4>
           <hr />
           <h5>Enter text to filter locations</h5>
           <input id="inputFilter" data-bind="textInput: filter, valueUpdate:['input']" type="text">
           <input data-bind="click: clearFilter" type="button" value="Clear">
           <hr />
-          <table class="table table-striped">
+          <table class="table table-striped" id=>
             <thead>
               <th>Location</th>
             </thead>
@@ -36,7 +36,7 @@
             </tbody>
           </table>
         </div>
-        <div class="col-9" id="map"></div>
+        <div class="col-xs-12 col-sm-7 col-md-9 col-lg-9 col-xl-9" id="map"></div>
       </div>
     </div>
 
