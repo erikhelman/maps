@@ -21,18 +21,18 @@
       <!-- create rows for location list and map -->
       <div class="row" id="main">
         <div class="col-3">
-          <h4>Check Out This Stuff in Japan!</h4>
+          <h4 id="title-heading">Check Out This Stuff in Japan!</h4>
           <hr />
           <h5>Enter text to filter locations</h5>
-          <input data-bind="textInput: filter, valueUpdate:['input']" type="text">
-          <input type="button" value="Clear">
+          <input id="inputFilter" data-bind="textInput: filter, valueUpdate:['input']" type="text">
+          <input data-bind="click: clearFilter" type="button" value="Clear">
           <hr />
           <table class="table table-striped">
             <thead>
               <th>Location</th>
             </thead>
             <tbody data-bind="foreach: filteredLocations">
-              <td data-bind="text: title"></td>
+              <td data-bind="text: title, click: selectMarker"></td>
             </tbody>
           </table>
         </div>
@@ -53,8 +53,8 @@
 
     <!-- Add required files for Bootstrap -->
     <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous">
     </script>
     <script

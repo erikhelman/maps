@@ -26,6 +26,9 @@ function initMap() {
       mapTypeControl: false
     });
 
+  // Create an instance of infoWindow to display infomration when a marker is clicked
+  var infowindow = new google.maps.InfoWindow();
+
   // Define location object
   var Location = function(locationData) {
     var self = this;
@@ -33,18 +36,29 @@ function initMap() {
     this.position = locationData.location;
     this.venue_id = locationData.venue_id;
     this.visible = ko.observable(false);
-    this.infowindow = new google.maps.InfoWindow({content: locationData.title});
 
+    // Create a marker for each location
     this.marker = new google.maps.Marker({
       map: map,
       title: locationData.title,
-      position: locationData.location
+      position: locationData.location,
+      animation: google.maps.Animation.DROP,
+      venue_id: locationData.venue_id
     });
 
+    // Add the event handler for when the user clicks on the marker
+    // Calls a function to bounce the marker and populate the window with data
     this.marker.addListener('click', function() {
-            populateInfoWindow(this, self.infowindow);
-          });
+       var self = this;
+      this.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout( function() {
+        self.setAnimation(null);
+      }, 1500);
+      populateInfoWindow(this, infowindow);
+    });
 
+    // This is a computed function to automatically update the visibility
+    // of the markers on the map based on filter criteria
     this.showMarker = ko.computed(function() {
       if (this.visible()) {
         this.marker.setMap(map);
@@ -53,21 +67,54 @@ function initMap() {
       }
     }, this);
 
+    // Populate the infowindow when the user clicks on a marker
     function populateInfoWindow(marker, infowindow) {
-        // Check to make sure the infowindow is not already opened on this marker.
 
-          if (infowindow.marker != marker) {
-            infowindow.marker = marker;
-            infowindow.setContent('<div>' + marker.title + '</div>');
-            infowindow.open(map, marker);
-            // Make sure the marker property is cleared if the infowindow is closed.
-            infowindow.addListener('closeclick',function() {
-              infowindow.setMarker = null;
-            });
+      // Check to make sure the infowindow is not already opened on this marker.
+      if (infowindow.marker != marker) {
+        var client_id = "QOSPDAY14A50TPUT13HFBTFUWXWHBQP5QFBK2GSSJTXV0Z3U";
+        var client_secret = "OOO5SVHYZMBN0F10E4TDQHALRNGPADJBYDZGBGXUU2ZZVPKN";
+        var version = "20171231";
+        var url = "https://api.foursquare.com/v2/venues/" + marker.venue_id + "/photos";
+        var data = { client_id: client_id, client_secret: client_secret, v: version, limit: 5};
+
+        infowindow.marker = marker;
+
+
+        var jqxhr = $.getJSON( url, data, function() {
+        })
+        .done(function() {
+          if (jqxhr.status === 200) {
+            photo = jqxhr.responseJSON.response.photos.items[0].prefix + "cap200" + jqxhr.responseJSON.response.photos.items[0].suffix;
+            console.log(photo);
+            infowindow.setContent('<div><b>' + marker.title + '</b></div><div><img src= ' + photo + ' alt="Venue photo"></img></div>');
+
+          } else {
+            infowindow.setContent('<div><b>' + marker.title + '</b></div><div>Unable to retrieve photo data</div>');
           }
+        })
+        .fail(function() {
+          infowindow.setContent('<div><b>' + marker.title + '</b></div><div>Unable to retrieve photo data</div>');
+        })
 
+        infowindow.open(map, marker);
+        map.panTo(marker.getPosition());
+
+        // Make sure the marker property is cleared if the infowindow is closed.
+        infowindow.addListener('closeclick',function() {
+
+          infowindow.setMarker = null;
+          infowindow.setContent('');
+        });
       }
+    };
+
+    // Select a marker when a link from the nav is clicked
+    this.selectMarker = function(location) {
+      google.maps.event.trigger(self.marker, 'click');
     }
+
+  }
 
   // Knockout view model
   var viewModel = function() {
@@ -76,11 +123,17 @@ function initMap() {
     this.filter = ko.observable();
     this.locations = ko.observableArray([]);
 
-    // Filter the locations based on the filter text
+    // Clear the filter text when the button is clicked
+    this.clearFilter = function(data, event) {
+        self.filter("");
+    };
+
+    // Create an array of locations based on the initial data
     pointsOfInterest.forEach(function(locationData){
 		    self.locations.push(new Location(locationData));
 	     });
 
+    // Filter the locations based on the filter text
   	this.filteredLocations = ko.computed(function() {
        var filter = self.filter();
 

@@ -2,3 +2,9 @@
 #main {
   height:100vh;
 }
+#title-heading {
+  padding-top: 10px;
+}
+td {
+  cursor: pointer;
+}
