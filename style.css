@@ -1,18 +1,18 @@
-#main {
+.main {
   height:100vh;
 }
-#title-heading {
+.title-heading {
   padding-top: 10px;
 }
 td {
   cursor: pointer;
 }
 @media screen and (max-width: 575px) {
-    #links {
+    .links {
         height: 50%;
         overflow: scroll;
     }
-    #map {
+    .map {
       height: 50%;
     }
 }

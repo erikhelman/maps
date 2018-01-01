@@ -1,6 +1,10 @@
 // Create variables for map and location array
 var map;
 
+function mapError() {
+  var alert = document.getElementById('map');
+  alert.innerHTML += '<div class="alert alert-danger" role="alert">Error loading Google Maps. Please refresh the page.</div>';
+}
 
 // Initialize map
 function initMap() {
@@ -37,7 +41,7 @@ function initMap() {
     this.venue_id = locationData.venue_id;
     this.visible = ko.observable(false);
 
-    // Create a marker for each location
+    // Create a marker for the location
     this.marker = new google.maps.Marker({
       map: map,
       title: locationData.title,
@@ -47,7 +51,7 @@ function initMap() {
     });
 
     // Add the event handler for when the user clicks on the marker
-    // Calls a function to bounce the marker and populate the window with data
+    // Bounce the marker and populate the window with data
     this.marker.addListener('click', function() {
        var self = this;
       this.setAnimation(google.maps.Animation.BOUNCE);
@@ -57,8 +61,7 @@ function initMap() {
       populateInfoWindow(this, infowindow);
     });
 
-    // This is a computed function to automatically update the visibility
-    // of the markers on the map based on filter criteria
+    // Update the visibility of the markers on the map based on filter criteria
     this.showMarker = ko.computed(function() {
       if (this.visible()) {
         this.marker.setMap(map);
@@ -67,15 +70,15 @@ function initMap() {
       }
     }, this);
 
-    // Populate the infowindow when the user clicks on a marker
+    // Populate the infowindow when the user selects a location
     function populateInfoWindow(marker, infowindow) {
 
       // Check to make sure the infowindow is not already opened on this marker.
       if (infowindow.marker != marker) {
-        var client_id = "QOSPDAY14A50TPUT13HFBTFUWXWHBQP5QFBK2GSSJTXV0Z3U";
-        var client_secret = "OOO5SVHYZMBN0F10E4TDQHALRNGPADJBYDZGBGXUU2ZZVPKN";
-        var version = "20171231";
-        var url = "https://api.foursquare.com/v2/venues/" + marker.venue_id + "/photos";
+        var client_id = 'QOSPDAY14A50TPUT13HFBTFUWXWHBQP5QFBK2GSSJTXV0Z3U';
+        var client_secret = 'OOO5SVHYZMBN0F10E4TDQHALRNGPADJBYDZGBGXUU2ZZVPKN';
+        var version = '20171231';
+        var url = 'https://api.foursquare.com/v2/venues/' + marker.venue_id + '/photos';
         var data = { client_id: client_id, client_secret: client_secret, v: version, limit: 5};
 
         infowindow.marker = marker;
@@ -85,7 +88,7 @@ function initMap() {
         })
         .done(function() {
           if (jqxhr.status === 200) {
-            photo = jqxhr.responseJSON.response.photos.items[0].prefix + "cap200" + jqxhr.responseJSON.response.photos.items[0].suffix;
+            photo = jqxhr.responseJSON.response.photos.items[0].prefix + 'cap200' + jqxhr.responseJSON.response.photos.items[0].suffix;
             infowindow.setContent('<div><b>' + marker.title + '</b></div><div><img src= ' + photo + ' alt="Venue photo"></img></div>');
 
           } else {

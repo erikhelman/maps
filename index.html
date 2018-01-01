@@ -3,7 +3,8 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -19,13 +20,17 @@
     <!-- create main container -->
     <div class="container-flex">
       <!-- create rows for location list and map -->
-      <div class="row" id="main">
-        <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3" id="links">
-          <h4 id="title-heading">Check Out This Stuff in Japan!</h4>
+      <div class="row main">
+        <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-3 links">
+          <h4 class="title-heading">Check Out This Stuff in Japan!</h4>
           <hr />
           <h5>Enter text to filter locations</h5>
-          <input id="inputFilter" data-bind="textInput: filter, valueUpdate:['input']" type="text">
-          <input data-bind="click: clearFilter" type="button" value="Clear">
+          <input id="inputFilter"
+                data-bind="textInput: filter, valueUpdate:['input']"
+                type="text">
+          <input data-bind="click: clearFilter"
+                type="button"
+                value="Clear">
           <hr />
           <table class="table table-striped" id=>
             <thead>
@@ -36,7 +41,7 @@
             </tbody>
           </table>
         </div>
-        <div class="col-xs-12 col-sm-7 col-md-9 col-lg-9 col-xl-9" id="map"></div>
+        <div class="col-xs-12 col-sm-7 col-md-9 col-lg-9 col-xl-9 map" id="map"></div>
       </div>
     </div>
 
@@ -73,7 +78,8 @@
       async
       defer
       src=
-        "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyD56X10ueqMs24L_lpGs6pcQrnBOGLT3qc&v=3&callback=initMap">
+        "https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyD56X10ueqMs24L_lpGs6pcQrnBOGLT3qc&v=3&callback=initMap"
+      onerror="mapError()">
     </script>
 
   </body>
